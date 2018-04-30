@@ -4,19 +4,12 @@ import os
 import datetime
 
 from buildModel import CNN
-#from evaluateModel import GetValidationPerformance, GetTestPerformance
+from evaluateModel import EvaluateModel
 from DataSetNPY import DataSetNPY
 from metrics import *
+from globalVars import *
 
 with tf.device('/device:GPU:0'):
-    # Global Values
-    width = 96
-    height = 96
-    n_channels = 1
-    n_classes = 2
-    imageBatchDims = (-1, width, height, n_channels)
-    labelBatchDims = (-1, width, height)
-
     #Define dataset operations
     dataBaseString = '/data/psturm/FETAL/'
     trainPrefix = 'trainImages/'
@@ -61,10 +54,9 @@ with tf.device('/device:GPU:0'):
         os.makedirs(modelPath)
     if not os.path.exists(summaryPath):
         os.makedirs(summaryPath)
-    cappedIterations = 1000
-    batchStepsBetweenSummaries = 10
-    
-    
+
+#Define Validation Operations
+evalObj = EvaluateModel()
 
 with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
     #Start Queue Runner for Data Input
@@ -81,7 +73,8 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
         if i % batchStepsBetweenSummaries == 0:
             _, trainingLoss, diceCoeff, summaries = sess.run([trainOp, lossOp, diceOp, mergedSummaries])
             summaryWriter.add_summary(summaries, i)
-            print('Iteration {}: Training Loss = {}, Dice = {}'.format(i, trainingLoss, diceCoeff))
+            valdLoss, valdDice = evalObj.GetPerformance(sess)
+            print('Iteration {}, Training: [Loss = {}, Dice = {}], Validation: [Loss = {}, Dice = {}]'.format(i, trainingLoss, diceCoeff, valdLoss, valdDice))
         else:
             sess.run([trainOp])
             
