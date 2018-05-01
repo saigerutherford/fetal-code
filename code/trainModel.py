@@ -34,6 +34,8 @@ with tf.device('/device:GPU:0'):
     with tf.variable_scope('InputPlaceholders'):
         imagesPL = tf.placeholder(dtype=tf.float32, shape=imageShape, name='imagesPL')
         labelsPL = tf.placeholder(dtype=tf.float32, shape=maskShape, name='masksPL')
+        tf.summary.image('Images', imagesPL, max_outputs=3)
+        tf.summary.image('Masks', tf.expand_dims(labelsPL, -1), max_outputs=3)
         binaryLabels = tf.cast(labelsPL > 0, tf.int32)
     valdImages, valdMasks = valdDataSet.NextBatch(None) # Of shape (-1, 96, 96, 37)
     testImages, testMasks = testDataSet.NextBatch(None)
@@ -86,6 +88,9 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
     saver = tf.train.Saver()
     sess.run(tf.global_variables_initializer())
     
+    accumulatedSteps = 0
+    bestValdLoss = np.inf
+    
     for i in range(cappedIterations):
         trainImages, trainMasks = trainDataSet.NextBatch(sess)
         feed_dict = {
@@ -102,6 +107,15 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
             summaries = sess.run(mergedSummaries, feed_dict={lossPL: valdLoss, dicePL: valdDice})
             evalWriter.add_summary(summaries, i)
             print('Iteration {}, Training: [Loss = {}, Dice = {}], Validation: [Loss = {}, Dice = {}]'.format(i, trainingLoss, diceCoeff, valdLoss, valdDice))
+            
+            if valdLoss < bestValdLoss:
+                bestValdLoss = valdLoss
+                accumulatedSteps = 0
+            else:
+                accumulatedSteps += batchStepsBetweenSummaries
+                if accumulatedSteps > stepsBeforeStoppingCriteria:
+                    print('Reached early stopping criteria with validation loss {}'.format(bestValdLoss))
+                    break
         else:
             sess.run([trainOp], feed_dict=feed_dict)
     

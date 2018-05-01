@@ -19,7 +19,7 @@ class DataSetNPY(object):
             batchSize=64,
             maxItemsInQueue=100,
             shuffle=True,
-            augment='none'
+            augment=None
         ):
         self.filenames = filenames
         self.batchSize = batchSize
@@ -41,8 +41,8 @@ class DataSetNPY(object):
             tf.py_func(self._loadLabels, [dequeueOp], tf.float32),
             labelBatchDims)
         self.augment = augment
-        if self.augment != 'none':
-            self.CreateAugmentOperations(augmentation=augment)
+        if self.augment != None:
+            self.CreateAugmentOperations()
 
     def PreloadData(self):
         files = [x.encode() for x in self.filenames]
@@ -55,13 +55,16 @@ class DataSetNPY(object):
         if self.preloaded:
             return self.loadedImages, self.loadedLabels
 
-        if self.augment == 'none':
+        if self.augment is None:
             return sess.run([self.imageBatchOperation, self.labelBatchOperation])
         else:
-            return sess.run([self.augmentedImageOperation, self.labelBatchOperation])
+            return sess.run([self.augmentedImageOperation, self.augmentedLabelOperation])
 
     def GetBatchOperations(self):
-        return self.imageBatchOperation, self.labelBatchOperation
+        if self.augment is None:
+            return self.imageBatchOperation, self.labelBatchOperation
+        else:
+            return self.augmentedImageOperation, self.augmentedLabelOperation
 
     def GetRandomBatchOperations(self):
         randomIndexOperation = tf.random_uniform(shape=(self.batchSize,),
@@ -78,38 +81,41 @@ class DataSetNPY(object):
             self.labelBatchDims)
         return randomImageBatch, randomLabelBatch
 
-    def CreateAugmentOperations(self, augmentation='flip'):
-        with tf.variable_scope('DataAugmentation'):
-            if augmentation == 'flip':
-                augmentedImageOperation = tf.reverse(self.imageBatchOperation,
-                                                     axis=[1],
-                                                     name='flip')
-            elif augmentation == 'translate':
-                imageRank = 3
-                maxPad = 6
-                minPad = 0
-                randomPadding = tf.random_uniform(shape=(3, 2),
-                                                  minval=minPad,
-                                                  maxval=maxPad + 1,
-                                                  dtype=tf.int32)
-                randomPadding = tf.pad(randomPadding, paddings=[[1, 1], [0, 0]])
-                paddedImageOperation = tf.pad(self.imageBatchOperation, randomPadding)
-                sliceBegin = randomPadding[:, 1]
-                sliceEnd = self.imageBatchDims
-                augmentedImageOperation = tf.slice(paddedImageOperation,
-                                                sliceBegin,
-                                                sliceEnd)
-
-            chooseOperation = tf.cond(
-                tf.equal(
+    def returnCoinPred(self):
+        return tf.equal(
                     tf.ones(shape=(), dtype=tf.int32),
                     tf.random_uniform(shape=(), dtype=tf.int32, minval=0, maxval=2)
-                ),
-                lambda: augmentedImageOperation,
-                lambda: self.imageBatchOperation,
-                name='ChooseAugmentation'
-            )
-            self.augmentedImageOperation = tf.reshape(chooseOperation, self.imageBatchDims)
+                )
+    
+    def chooseTensor(self, tensorAImage, tensorBImage, tensorALabel, tensorBLabel):
+        pred = self.returnCoinPred()
+        return tf.cond(pred, lambda: tensorAImage, lambda: tensorBImage), tf.cond(pred, lambda: tensorALabel, lambda: tensorBLabel)
+        
+    def CreateAugmentOperations(self):
+        with tf.variable_scope('DataAugmentation'):
+            squeezedImages = tf.reshape(self.imageBatchOperation, shape=[self.imageBatchDims[0], self.imageBatchDims[1], self.imageBatchDims[2]])
+            squeezedLabels = self.labelBatchOperation
+            
+            with tf.variable_scope('FlipUpDown'):
+                flipUpDownImage = tf.reverse(squeezedImages, axis=[1], name='FlipUpDownImage')
+                flipUpDownLabel = tf.reverse(squeezedLabels, axis=[1], name='FlipUpDownLabel')
+                self.augmentedImageOperation, self.augmentedLabelOperation = self.chooseTensor(flipUpDownImage, squeezedImages,
+                                                                                               flipUpDownLabel, squeezedLabels)
+            
+            with tf.variable_scope('FlipLeftRight'):
+                flipLeftRightImage = tf.reverse(self.augmentedImageOperation, axis=[2], name='FLipLeftRightImage')
+                flipLeftRightLabel = tf.reverse(self.augmentedLabelOperation, axis=[2], name='FlipLeftRightLabel')
+                self.augmentedImageOperation, self.augmentedLabelOperation = self.chooseTensor(flipLeftRightImage, self.augmentedImageOperation,
+                                                            flipLeftRightLabel, self.augmentedLabelOperation)
+            with tf.variable_scope('Rotations'):
+                for i in range(3):
+                    randomRotateImage = tf.image.rot90(self.augmentedImageOperation)
+                    randomRotateLabel = tf.image.rot90(self.augmentedLabelOperation)
+                    self.augmentedImageOperation, self.augmentedLabelOperation = self.chooseTensor(randomRotateImage, self.augmentedImageOperation,
+                                                                randomRotateLabel, self.augmentedLabelOperation)
+            
+            self.augmentedImageOperation = tf.reshape(self.augmentedImageOperation, self.imageBatchDims)
+            self.augmentedLabelOperation = tf.reshape(self.augmentedLabelOperation, self.labelBatchDims)
 
     def _loadImages(self, x):
         images = []

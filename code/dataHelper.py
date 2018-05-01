@@ -44,5 +44,6 @@ def GetDataSets():
                                   imageBatchDims=imageBatchDims,
                                   labelBatchDims=labelBatchDims,
                                   labelBaseString='{}{}'.format(dataBaseString, labelPrefix),
-                                  batchSize=64)
+                                  batchSize=64,
+                                  augment=True)
     return trainDataSet, valdDataSet, testDataSet
