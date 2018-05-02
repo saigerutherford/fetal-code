@@ -4,10 +4,10 @@ width = 96
 height = 96
 n_channels = 1
 n_classes = 2
-cappedIterations = 1001
-batchStepsBetweenSummaries = 100
+cappedIterations = 100001
+batchStepsBetweenSummaries = 500
 
-stepsBeforeStoppingCriteria = 2000
+stepsBeforeStoppingCriteria = 20000
 
 imageBatchDims = (-1, width, height, n_channels)
 labelBatchDims = (-1, width, height)

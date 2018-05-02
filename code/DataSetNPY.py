@@ -94,17 +94,18 @@ class DataSetNPY(object):
     def CreateAugmentOperations(self):
         with tf.variable_scope('DataAugmentation'):
             squeezedImages = tf.reshape(self.imageBatchOperation, shape=[self.imageBatchDims[0], self.imageBatchDims[1], self.imageBatchDims[2]])
-            squeezedLabels = self.labelBatchOperation
+            squeezedImages = tf.transpose(squeezedImages, [1, 2, 0])
+            squeezedLabels = tf.transpose(self.labelBatchOperation, [1, 2, 0])
             
             with tf.variable_scope('FlipUpDown'):
-                flipUpDownImage = tf.reverse(squeezedImages, axis=[1], name='FlipUpDownImage')
-                flipUpDownLabel = tf.reverse(squeezedLabels, axis=[1], name='FlipUpDownLabel')
+                flipUpDownImage = tf.image.flip_up_down(squeezedImages)
+                flipUpDownLabel = tf.image.flip_up_down(squeezedLabels)
                 self.augmentedImageOperation, self.augmentedLabelOperation = self.chooseTensor(flipUpDownImage, squeezedImages,
                                                                                                flipUpDownLabel, squeezedLabels)
             
             with tf.variable_scope('FlipLeftRight'):
-                flipLeftRightImage = tf.reverse(self.augmentedImageOperation, axis=[2], name='FLipLeftRightImage')
-                flipLeftRightLabel = tf.reverse(self.augmentedLabelOperation, axis=[2], name='FlipLeftRightLabel')
+                flipLeftRightImage = tf.image.flip_left_right(self.augmentedImageOperation)
+                flipLeftRightLabel = tf.image.flip_left_right(self.augmentedLabelOperation)
                 self.augmentedImageOperation, self.augmentedLabelOperation = self.chooseTensor(flipLeftRightImage, self.augmentedImageOperation,
                                                             flipLeftRightLabel, self.augmentedLabelOperation)
             with tf.variable_scope('Rotations'):
@@ -114,8 +115,8 @@ class DataSetNPY(object):
                     self.augmentedImageOperation, self.augmentedLabelOperation = self.chooseTensor(randomRotateImage, self.augmentedImageOperation,
                                                                 randomRotateLabel, self.augmentedLabelOperation)
             
-            self.augmentedImageOperation = tf.reshape(self.augmentedImageOperation, self.imageBatchDims)
-            self.augmentedLabelOperation = tf.reshape(self.augmentedLabelOperation, self.labelBatchDims)
+            self.augmentedImageOperation = tf.reshape(tf.transpose(self.augmentedImageOperation, [2, 0, 1]), self.imageBatchDims)
+            self.augmentedLabelOperation = tf.reshape(tf.transpose(self.augmentedLabelOperation, [2, 0, 1]), self.labelBatchDims)
 
     def _loadImages(self, x):
         images = []
