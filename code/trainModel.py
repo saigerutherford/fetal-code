@@ -9,6 +9,30 @@ from DataSetNPY import DataSetNPY
 from metrics import *
 from globalVars import *
 
+def getBootstrapPerformanceOnImages(sess, images, masks, imagesPL, labelsPL, lossOp):
+    patientLosses = np.zeros((images.shape[-1]))
+    
+    for i in range(images.shape[-1]):
+        randomIndex = np.random.randint(0, images.shape[-1])
+        patientImages = np.reshape(images[:, :, :, randomIndex], (37, 96, 96, 1))
+        patientMasks = np.reshape(masks[:, :, :, randomIndex], (37, 96, 96))
+        feed_dict = {
+            imagesPL: patientImages,
+            labelsPL: patientMasks
+        }
+        loss = sess.run(lossOp, feed_dict=feed_dict)
+        patientLosses[i] = loss
+        
+    accumulatedLosses = []
+    for i in range(1000):
+        accumulatedLosses.append(np.mean(np.random.choice(patientLosses, size=images.shape[-1], replace=True)))
+    accumulatedLosses = np.sort(accumulatedLosses)
+    lower = accumulatedLosses[25]
+    mid = np.mean(patientLosses)
+    upper = accumulatedLosses[975]
+    
+    return lower, mid, upper
+        
 def getPerformanceOnImages(sess, images, masks, imagesPL, labelsPL, lossOp, diceOp, inputSummary):
     accumulatedLoss = 0
     accumulatedDice = 0
@@ -75,6 +99,13 @@ def main(train=True, timeString=None):
         evalDiceOp = PatientDice(binaryLabels, binaryOutputLayer)
         dicePL = tf.placeholder(dtype=tf.float32, shape=())
         diceSummary = tf.summary.scalar('DiceCoeff', dicePL)
+        
+        with tf.variable_scope('Accuracy'):
+            accuracyOp = tf.reduce_sum(tf.cast(tf.equal(binaryOutputLayer, binaryLabels), tf.float32)) / tf.cast(tf.reduce_prod(tf.shape(binaryLabels)), tf.float32)
+        with tf.variable_scope('TruePositive'):
+            truePositiveOp = tf.reduce_sum(tf.cast(binaryLabels, tf.float32) * tf.cast(tf.equal(binaryOutputLayer, binaryLabels), tf.float32)) / tf.reduce_sum(tf.cast(binaryLabels, tf.float32))
+        with tf.variable_scope('TrueNegative'):
+            trueNegativeOp = tf.reduce_sum(tf.cast(1 - binaryLabels, tf.float32) * tf.cast(tf.equal(binaryOutputLayer, binaryLabels), tf.float32)) / tf.reduce_sum(tf.cast(1 - binaryLabels, tf.float32))
 
     #Initialize weights, sessions
     if not train and timeString is None:
@@ -139,13 +170,21 @@ def main(train=True, timeString=None):
 
         saver.restore(sess, modelPath)
         print('Model restored from path: {}'.format(modelPath))
-        testLoss, testDice, _= getPerformanceOnImages(sess, testImages, testMasks, imagesPL, labelsPL, lossOp, evalDiceOp, None)
-        print('Test: [Loss = {}, Dice = {}]'.format(testLoss, testDice))
+        lower, mid, upper = getBootstrapPerformanceOnImages(sess, testImages, testMasks, imagesPL, labelsPL, lossOp)
+        print('Test: Loss = {}, ({}, {})'.format(mid, lower, upper))
+        lower, mid, upper = getBootstrapPerformanceOnImages(sess, testImages, testMasks, imagesPL, labelsPL, evalDiceOp)
+        print('Test: DICE = {}, ({}, {})'.format(mid, lower, upper))
+        lower, mid, upper = getBootstrapPerformanceOnImages(sess, testImages, testMasks, imagesPL, labelsPL, accuracyOp)
+        print('Test: Accuracy = {}, ({}, {})'.format(mid, lower, upper))
+        lower, mid, upper = getBootstrapPerformanceOnImages(sess, testImages, testMasks, imagesPL, labelsPL, truePositiveOp)
+        print('Test: TruePositive = {}, ({}, {})'.format(mid, lower, upper))
+        lower, mid, upper = getBootstrapPerformanceOnImages(sess, testImages, testMasks, imagesPL, labelsPL, trueNegativeOp)
+        print('Test: TrueNegative = {}, ({}, {})'.format(mid, lower, upper))
         coord.request_stop()
         coord.join(threads)
 
 #This line evaluates the model on the test set. It does not train anything.
-main(train=False, timeString='2018-05-02_10:58') 
+#main(train=False, timeString='2018-05-02_10:58') 
 
 #This line trains a model from scratch on the training set.
-#main()
+main()

@@ -11,7 +11,7 @@ from globalVars import *
 
 def GetDataSets():
     with tf.variable_scope('EvaluationInputs'):
-        dataBaseString = '/data/psturm/FETAL/'
+        dataBaseString = '/data1/brain/FETAL/'
 
         valdImagePrefix = 'valdImages/'
         valdLabelPrefix = 'valdMasks/mask_'
@@ -35,7 +35,7 @@ def GetDataSets():
     
     with tf.variable_scope('TrainingInputs'):
         #Define dataset operations
-        dataBaseString = '/data/psturm/FETAL/'
+        dataBaseString = '/data1/brain/FETAL/'
         trainPrefix = 'trainImages/'
         labelPrefix = 'trainMasks/mask_'
         filenames = os.listdir('{}{}'.format(dataBaseString, trainPrefix))
