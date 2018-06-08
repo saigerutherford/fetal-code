@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import os
 import datetime
+import time
 
 from medpy.io import load, save
 from buildModel import CNN
@@ -37,23 +38,23 @@ def createMasks(fileNames, saveNames, checkpointDir=None):
         for i in range(len(fileNames)):
             fileName = fileNames[i]
             saveName = saveNames[i]
-
+            start = time.time()
             image, header = load(fileName)
             image = np.transpose(image, (2, 0, 1))
             image = np.expand_dims(image, -1)
 
             #The predicted mask is of shape (37, 96, 96)
             predictedMask = sess.run(binaryOutputLayer, feed_dict={imagesPL: image})
-            print(predictedMask)
             predictedMask = np.transpose(predictedMask, (1, 2, 0))
             save(predictedMask, saveName, header)
-
-
+            end = time.time()
+            print(end-start)
+ 
 #AN EXAMPLE OF HOW TO USE THIS WITH AN ENTIRE DIRECTORY
 dir = 'images/'
-fileNames = [dir + name for name in os.listdir(dir)]
-saveNames = ['pred_' + name for name in fileNames]
-createMasks(fileNames, saveNames)
+#fileNames = [dir + name for name in os.listdir(dir)]
+#saveNames = ['pred_' + name for name in fileNames]
+#createMasks(fileNames, saveNames)
 
 #AN EXAMPLE WITH A SINGLE FILE
 fileNames = ['zpr_2006-T1_run1_vol0017.nii']

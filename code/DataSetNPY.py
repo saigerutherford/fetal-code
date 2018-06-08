@@ -87,6 +87,28 @@ class DataSetNPY(object):
                     tf.random_uniform(shape=(), dtype=tf.int32, minval=0, maxval=2)
                 )
     
+    def randomTranslation(self, imageTensor, maskTensor):
+        maxPad = 20
+        minPad = 0
+        print(imageTensor.shape)
+        print(maskTensor.shape)
+        randomPadding = tf.random_uniform(shape=(2,2),
+                                          minval=minPad,
+                                          maxval=maxPad + 1,
+                                          dtype=tf.int32)
+        randomPadding = tf.pad(randomPadding, paddings=[[0,1], [0,0]])
+        paddedImageOperation = tf.pad(imageTensor, randomPadding)
+        paddedMaskOperation = tf.pad(maskTensor, randomPadding)
+        sliceBegin = randomPadding[:, 1]
+        sliceEnd = [self.imageBatchDims[1], self.imageBatchDims[2], self.imageBatchDims[0]]
+        augmentedImageOperation = tf.slice(paddedImageOperation,
+                                           sliceBegin,
+                                           sliceEnd)
+        augmentedMaskOperation = tf.slice(paddedMaskOperation,
+                                          sliceBegin,
+                                          sliceEnd)
+        return augmentedImageOperation, augmentedMaskOperation
+        
     def chooseTensor(self, tensorAImage, tensorBImage, tensorALabel, tensorBLabel):
         pred = self.returnCoinPred()
         return tf.cond(pred, lambda: tensorAImage, lambda: tensorBImage), tf.cond(pred, lambda: tensorALabel, lambda: tensorBLabel)
@@ -114,6 +136,10 @@ class DataSetNPY(object):
                     randomRotateLabel = tf.image.rot90(self.augmentedLabelOperation)
                     self.augmentedImageOperation, self.augmentedLabelOperation = self.chooseTensor(randomRotateImage, self.augmentedImageOperation,
                                                                 randomRotateLabel, self.augmentedLabelOperation)
+            
+            with tf.variable_scope('Translations'):
+                self.augmentedImageOperation, self.augmentedLabelOperation = self.randomTranslation(self.augmentedImageOperation,
+                                                                                    self.augmentedLabelOperation)
             
             self.augmentedImageOperation = tf.reshape(tf.transpose(self.augmentedImageOperation, [2, 0, 1]), self.imageBatchDims)
             self.augmentedLabelOperation = tf.reshape(tf.transpose(self.augmentedLabelOperation, [2, 0, 1]), self.labelBatchDims)
