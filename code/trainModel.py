@@ -206,8 +206,8 @@ def main(train=True, timeString=None):
     
 
 #This line evaluates the model on the test set. It does not train anything.
-main(train=False, timeString='2018-06-07_14:07') 
+#main(train=False, timeString='2018-06-07_14:07') 
 
 #This line trains a model from scratch on the training set.
-#main()
+main()
 

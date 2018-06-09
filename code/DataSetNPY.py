@@ -90,8 +90,6 @@ class DataSetNPY(object):
     def randomTranslation(self, imageTensor, maskTensor):
         maxPad = 20
         minPad = 0
-        print(imageTensor.shape)
-        print(maskTensor.shape)
         randomPadding = tf.random_uniform(shape=(2,2),
                                           minval=minPad,
                                           maxval=maxPad + 1,

@@ -36,8 +36,10 @@ def GetDataSets():
     with tf.variable_scope('TrainingInputs'):
         #Define dataset operations
         dataBaseString = '/data1/brain/FETAL/'
-        trainPrefix = 'trainImages/'
-        labelPrefix = 'trainMasks/mask_'
+        #trainPrefix = 'trainImages/'
+        #labelPrefix = 'trainMasks/mask_'
+        trainPrefix = 'combinedSliceImages/'
+        labelPrefix = 'combinedSliceMasks/mask_'
         filenames = os.listdir('{}{}'.format(dataBaseString, trainPrefix))
         trainDataSet = DataSetNPY(filenames=filenames,
                                   imageBaseString='{}{}'.format(dataBaseString, trainPrefix),

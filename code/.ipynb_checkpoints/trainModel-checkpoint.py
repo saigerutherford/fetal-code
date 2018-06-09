@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import pandas as pd
 import os
 import datetime
 
@@ -9,19 +10,23 @@ from DataSetNPY import DataSetNPY
 from metrics import *
 from globalVars import *
 
-def getBootstrapPerformanceOnImages(sess, images, masks, imagesPL, labelsPL, lossOp):
+def getPatientLosses(sess, images, masks, imagesPL, labelsPL, lossOp):
     patientLosses = np.zeros((images.shape[-1]))
     
     for i in range(images.shape[-1]):
-        randomIndex = np.random.randint(0, images.shape[-1])
-        patientImages = np.reshape(images[:, :, :, randomIndex], (37, 96, 96, 1))
-        patientMasks = np.reshape(masks[:, :, :, randomIndex], (37, 96, 96))
+        patientImages = np.reshape(images[:, :, :, i], (37, 96, 96, 1))
+        patientMasks = np.reshape(masks[:, :, :, i], (37, 96, 96))
         feed_dict = {
             imagesPL: patientImages,
             labelsPL: patientMasks
         }
         loss = sess.run(lossOp, feed_dict=feed_dict)
         patientLosses[i] = loss
+    
+    return patientLosses
+
+def getBootstrapPerformanceOnImages(sess, images, masks, imagesPL, labelsPL, lossOp):
+    patientLosses = getPatientLosses(sess, images, masks, imagesPL, labelsPL, lossOp)
         
     accumulatedLosses = []
     for i in range(1000):
@@ -48,9 +53,12 @@ def getPerformanceOnImages(sess, images, masks, imagesPL, labelsPL, lossOp, dice
             labelsPL: patientMasks
         }
         if summaryInt == i and inputSummary is not None:
-            loss, dice, valdInputSummary = sess.run([lossOp, diceOp, inputSummary], feed_dict=feed_dict)
-        else:
-            loss, dice = sess.run([lossOp, diceOp], feed_dict=feed_dict)
+            summaryDict = {
+                imagesPL: np.reshape(patientImages[18, :, :, :], (1, 96, 96, 1)),
+                labelsPL: np.reshape(patientMasks[18, :,  :], (1, 96, 96))
+            }
+            valdInputSummary = sess.run(inputSummary, feed_dict=summaryDict)
+        loss, dice = sess.run([lossOp, diceOp], feed_dict=feed_dict)
         accumulatedLoss += loss
         accumulatedDice += dice
         denom += 1
@@ -69,6 +77,7 @@ def main(train=True, timeString=None):
     valdImages = np.swapaxes(valdImages, 0, 3)
     valdMasks = np.swapaxes(valdMasks, 0, 3) 
     testImages, testMasks = testDataSet.NextBatch(None)
+    testFileNames = testDataSet.filenames
     testImages = np.swapaxes(testImages, 0, 3)
     testMasks = np.swapaxes(testMasks, 0, 3)
     
@@ -82,9 +91,9 @@ def main(train=True, timeString=None):
     #Build Model
     outputLayer = CNN(imagesPL)
     binaryOutputLayer = tf.argmax(outputLayer, axis=3, output_type=tf.int32)
-    inputSummary = tf.summary.merge([tf.summary.image('Images', imagesPL), 
-                                     tf.summary.image('TrueMasks', tf.expand_dims(tf.cast(binaryLabels, tf.float32), -1)),
-                                     tf.summary.image('PredictedMasks', tf.expand_dims(tf.cast(binaryOutputLayer, tf.float32), -1))
+    inputSummary = tf.summary.merge([tf.summary.image('Images', imagesPL, max_outputs=1), 
+                                     tf.summary.image('TrueMasks', tf.expand_dims(tf.cast(binaryLabels, tf.float32), -1),  max_outputs=1),
+                                     tf.summary.image('PredictedMasks', tf.expand_dims(tf.cast(binaryOutputLayer, tf.float32), -1), max_outputs=1)
                                     ])
 
     #Define Training Operation
@@ -103,7 +112,9 @@ def main(train=True, timeString=None):
         with tf.variable_scope('Accuracy'):
             accuracyOp = tf.reduce_sum(tf.cast(tf.equal(binaryOutputLayer, binaryLabels), tf.float32)) / tf.cast(tf.reduce_prod(tf.shape(binaryLabels)), tf.float32)
         with tf.variable_scope('TruePositive'):
-            truePositiveOp = tf.reduce_sum(tf.cast(binaryLabels, tf.float32) * tf.cast(tf.equal(binaryOutputLayer, binaryLabels), tf.float32)) / tf.reduce_sum(tf.cast(binaryLabels, tf.float32))
+            numer = tf.reduce_sum(tf.cast(binaryLabels, tf.float32) * tf.cast(tf.equal(binaryOutputLayer, binaryLabels), tf.float32))
+            denom = tf.reduce_sum(tf.cast(binaryLabels, tf.float32))
+            truePositiveOp =  numer / denom 
         with tf.variable_scope('TrueNegative'):
             trueNegativeOp = tf.reduce_sum(tf.cast(1 - binaryLabels, tf.float32) * tf.cast(tf.equal(binaryOutputLayer, binaryLabels), tf.float32)) / tf.reduce_sum(tf.cast(1 - binaryLabels, tf.float32))
 
@@ -133,7 +144,7 @@ def main(train=True, timeString=None):
         sess.run(tf.global_variables_initializer())
 
         accumulatedSteps = 0
-        bestValdLoss = np.inf
+        bestDice = 0
         
         if train:
             for i in range(cappedIterations):
@@ -155,15 +166,15 @@ def main(train=True, timeString=None):
                     evalWriter.add_summary(valdImageSummaries, i)
                     print('Iteration {}, Training: [Loss = {}, Dice = {}], Validation: [Loss = {}, Dice = {}]'.format(i, trainingLoss, diceCoeff, valdLoss, valdDice))
 
-                    if valdLoss < bestValdLoss:
-                        bestValdLoss = valdLoss
+                    if valdDice > bestDice:
+                        bestDice = valdDice
                         accumulatedSteps = 0
                         saver.save(sess, modelPath)
                         print('Model saved to path: {}'.format(modelPath))
                     else:
                         accumulatedSteps += batchStepsBetweenSummaries
                         if accumulatedSteps > stepsBeforeStoppingCriteria:
-                            print('Reached early stopping criteria with validation loss {}'.format(bestValdLoss))
+                            print('Reached early stopping criteria with validation dice {}'.format(bestDice))
                             break
                 else:
                     sess.run([trainOp], feed_dict=feed_dict)
@@ -180,11 +191,22 @@ def main(train=True, timeString=None):
         print('Test: TruePositive = {}, ({}, {})'.format(mid, lower, upper))
         lower, mid, upper = getBootstrapPerformanceOnImages(sess, testImages, testMasks, imagesPL, labelsPL, trueNegativeOp)
         print('Test: TrueNegative = {}, ({}, {})'.format(mid, lower, upper))
+        
+        df = pd.DataFrame(data =  {
+            'Volume': testFileNames,
+            'Dice': getPatientLosses(sess, testImages, testMasks, imagesPL, labelsPL, evalDiceOp),
+            'Accuracy': getPatientLosses(sess, testImages, testMasks, imagesPL, labelsPL, accuracyOp),
+            'Sensitivity': getPatientLosses(sess, testImages, testMasks, imagesPL, labelsPL, truePositiveOp),
+            'Specificty': getPatientLosses(sess, testImages, testMasks, imagesPL, labelsPL, trueNegativeOp)
+        })
+        df.to_csv('PatientMetrics.csv', index=False)
+        
         coord.request_stop()
         coord.join(threads)
+    
 
 #This line evaluates the model on the test set. It does not train anything.
-#main(train=False, timeString='2018-05-02_10:58') 
+#main(train=False, timeString='2018-06-07_14:07') 
 
 #This line trains a model from scratch on the training set.
 main()
