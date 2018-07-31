@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Part 1: Preprocess for automasking
-for sub in `cat sublist` #sublist is a text file of 4D NIFTI files (1 filename per line)
+# Run from within preproc directory
+cd preproc/
+for sub in `cat ../sublist` #sublist is a text file of 4D NIFTI files (1 filename per line)
 do
 #Delete orientation, resample, zeropad, split 4D time series
 fslorient -deleteorient ${sub}
@@ -24,9 +26,13 @@ dim1 ! == 96 && dim2 ! == 96
 		done
 fi
 done
+mv zpr_* ../images/
 
 # Part 2: Run automask code, quality check masks (Pass/Fail)
-python CreateMask.py
+# createMask.py expects there to be a directory called "images/" where the 96 x 96 sized files live,
+# and that they are named zpr_SubjectID_runID.nii
+source /home/slab/environments/tensorflow/bin/activate
+python createMask.py
 
 #Concatenate masks, view as overlay on raw time series
 for sub in `cat sublist`; do fslmerge -t 4Dmask_${sub} pred_${sub}_vol*.nii; echo ${sub}; done
@@ -35,7 +41,7 @@ for sub in `cat sublist`; do fslmerge -t 4D_${sub} ${sub}_vol*.nii; echo ${sub};
 #Quality check
 for sub in 4D_*; do mask_name=`echo ${sub//4D_}`; fslview ${sub} 4Dmask_${mask_name} "Copper" -t 0.5
 
-#keep biggest cluster & binarize the probability mask
+#keep biggest cluster & binarize the probability masks (needs to be done on 3D volumes, not on 4D timeseries)
 for mask in pred_*
 	    do
 3dclust -1clip 0.1 -NN3 -savemask c_${mask}.nii ${mask}
@@ -45,7 +51,6 @@ done
 #Quality check 4D cluster image
 fslmerge -t 4Dbc_${sub} bc_${sub}
 fslview 4Dbc_${sub}.nii.gz
-
 
 #Undo ZeroPad & Resample into native space
 #First check native space dimensions
