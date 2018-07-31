@@ -6,7 +6,7 @@ Recent advancements in resting-state functional magnetic resonance (rs-fMRI) ima
 Checkpoints --> contains the saved models. **2018-06-07_14:07** is the model trained using _**train, validation, and test split**_ (129, 20, 48 subjects; 855, 102, 211 volumes) **2018-06-08_10:47** is the model trained on _**all**_ labeled data. 
 
 Summaries --> Contains the summaries for both models described above that can be viewed using tensorboard. 
-`tensorboard --logdir /summaries/model_name`
+`tensorboard --logdir=summaries/model_name`
 
 Code --> this directiory contains all necessary scripts for running the pretrained model (`createMasks.py`), or training your own model (`buildModel.py` and `trainModel.py`). PatientMetrics.csv contains the evaluation info for all subjects/volumes within the test set.
 
