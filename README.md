@@ -1,16 +1,16 @@
 # Automated Preprocessing Pipeline for Fetal fMRI Data
 ## Introduction
 Recent advancements in resting-state functional magnetic resonance (rs-fMRI) imaging have enabled observation of the human brain in utero, a period of rapid growth and development previously inaccessible. The application of fMRI to studying the fetal brain has produced unique challenges and is an opportune field for methods development. In this study, we present a novel application of a Convolutional Neural Network (CNN) to a challenging image classification task: identifying the fetal brain. Resting-state fMRI data was obtained from 197 fetuses (gestational age 24-39 weeks, M=30.9, SD=4.2). The output from automated brain tissue identification is compared with the ground truth of 1,168 manually drawn brain masks. We report that automated fetal brain classification is achievable at the same integrity of manual methods, in a fraction of the time. There is a 92% spatial overlap between automated and manual fetal brain masks in a held-out test set of 48 subjects and each auto-mask is generated in approximately 2.5 seconds compared to several hours for an expert working manually.  Furthermore, we unite the automated brain masking model with an adapted realignment technique to better handle motion, reorientation, and normalize to age-specific fetal templates to create the first open source, standardized, fully automated preprocessing pipeline for fetal functional MRI data.
-[Slides from E-Poster at ISMRM 2018](https://slideshare.net/SaigeRutherford/ismrm-eposter)
+[Slides from E-Poster at ISMRM 2018](https://www.slideshare.net/SaigeRutherford/ismrm-2018-eposter)
 ### Repository organization
 Checkpoints --> contains the saved models. **2018-06-07_14:07** is the model trained using _**train, validation, and test split**_ (129, 20, 48 subjects; 855, 102, 211 volumes) **2018-06-08_10:47** is the model trained on _**all**_ labeled data. 
 
 Summaries --> Contains the summaries for both models described above that can be viewed using tensorboard. 
-`tensorboard --logdir /summaries/model_name`
+`tensorboard --logdir=summaries/model_name`
 
 Code --> this directiory contains all necessary scripts for running the pretrained model (`createMasks.py`), or training your own model (`buildModel.py` and `trainModel.py`). PatientMetrics.csv contains the evaluation info for all subjects/volumes within the test set.
 
-FullFetalPreprocessPipeline.sh --> Example pipeline using auto-mask and FSL. **Work in progress, not a complete or tested**. 
+FullFetalPreprocessPipeline.sh --> Example pipeline using auto-mask and FSL. **Work in progress, not a complete pipeline or tested**. 
 ### Installation & Requirements
 Required libraries:
 1. NumPy
