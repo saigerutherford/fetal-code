@@ -1,17 +1,21 @@
 # Automated Preprocessing Pipeline for Fetal fMRI Data
-## Code for paper, Observing the origins of human brain development: Automated processing of fetal fMRI.
-Preprint: https://www.biorxiv.org/content/early/2019/01/21/525386
+**Preprint:** https://www.biorxiv.org/content/early/2019/01/21/525386
+
 **Abstract:** Fetal resting-state functional magnetic resonance imaging (rs-fMRI) has emerged as a critical new approach for characterizing brain network development before birth. Despite rapid and widespread growth of this approach, at present we lack neuroimaging analysis pipelines suited to address the unique challenges inherent in this data type. Here, we present a comprehensive fetal data processing pipeline with provision of full code, and solve the most challenging processing step, rapid and accurate isolation of the fetal brain from surrounding tissue across thousands of non-stationary 3D brain images. Leveraging our library of more than 1,000 manually traced fetal fMRI images, we trained a Convolutional Neural Network (CNN) that achieved excellent accuracy (>90%) across two held-out test sets from separate populations. Furthermore, we unite the auto-masking model with a full processing pipeline and report methodology, performance, and comparison to available alternatives. This work represents the first open source, automated, start-to-finish processing pipeline for fetal fMRI data.
 
 ### Repository organization
-checkpoints --> contains the saved models. **2018-06-07_14:07** is the model trained using _**train, validation, and test split**_ (129, 20, 48 subjects; 855, 102, 211 volumes) **2018-06-08_10:47** is the model trained on _**all**_ labeled data.
-code --> this directiory contains all necessary scripts for running the pretrained model (`createMasks.py`), or training your own model (`buildModel.py` and `trainModel.py`). PatientMetrics.csv contains the evaluation info for all subjects/volumes within the WSU test set.
-docs --> Protocol (Processing_Protocol.pdf) for running code, other miscellaneous note about the project.
-figures --> Jupyter notebook used to make the figures in the manuscript. BySubjectEvaluation.csv contains the WSU test set evaluation metrics grouped by subject and reported as an average (one test set subject has several volumes). ByVolumeEvaluation.csv contains the WSU test set evaluation metrics reported per volume. Yale_PatientMetrics3.csv contains the Yale test set evaluation metrics.
-notebooks --> Jupyter notebook examples of running code.
-summaries --> Contains the summaries for both models described above (in the checkpoints directory description) that can be viewed using tensorboard.
+**checkpoints -->** contains the saved models. **2018-06-07_14:07** is the model trained using _**train, validation, and test split**_ (129, 20, 48 subjects; 855, 102, 211 volumes) **2018-06-08_10:47** is the model trained on _**all**_ labeled data.
+
+**code -->** this directiory contains all necessary scripts for running the pretrained model (`createMasks.py`), or training your own model (`buildModel.py` and `trainModel.py`). PatientMetrics.csv contains the evaluation info for all subjects/volumes within the WSU test set. code/FullFetalPreprocessPipeline.sh --> Example pipeline using auto-mask and FSL. **Work in progress, not fully tested or setup without hard-coded paths**.
+
+**docs -->** Protocol (Processing_Protocol.pdf) for running code, other miscellaneous note about the project.
+
+**figures -->** Jupyter notebook used to make the figures in the manuscript. BySubjectEvaluation.csv contains the WSU test set evaluation metrics grouped by subject and reported as an average (one test set subject has several volumes). ByVolumeEvaluation.csv contains the WSU test set evaluation metrics reported per volume. Yale_PatientMetrics3.csv contains the Yale test set evaluation metrics.
+
+**notebooks -->** Jupyter notebook examples of running code.
+
+**summaries -->** Contains the summaries for both models described above (in the checkpoints directory description) that can be viewed using tensorboard.
 `tensorboard --logdir=summaries/model_name`
-code/FullFetalPreprocessPipeline.sh --> Example pipeline using auto-mask and FSL. **Work in progress, not fully tested or setup without hard-coded paths**.
 
 ### Installation & Requirements
 Required libraries: See Requirements.txt file
