@@ -3,10 +3,6 @@
 
 **Abstract:** Fetal resting-state functional magnetic resonance imaging (rs-fMRI) has emerged as a critical new approach for characterizing brain network development before birth. Despite rapid and widespread growth of this approach, at present we lack neuroimaging analysis pipelines suited to address the unique challenges inherent in this data type. Here, we present a comprehensive fetal data processing pipeline with provision of full code, and solve the most challenging processing step, rapid and accurate isolation of the fetal brain from surrounding tissue across thousands of non-stationary 3D brain images. Leveraging our library of more than 1,000 manually traced fetal fMRI images, we trained a Convolutional Neural Network (CNN) that achieved excellent accuracy (>90%) across two held-out test sets from separate populations. Furthermore, we unite the auto-masking model with a full processing pipeline and report methodology, performance, and comparison to available alternatives. This work represents the first open source, automated, start-to-finish processing pipeline for fetal fMRI data.
 
-Primary data used for pipeline development were acquired at Wayne State
-University School of Medicine during the course of projects supported by National
-Institutes of Health (NIH) awards MH110793 and ES026022.
-
 ### Repository organization
 **checkpoints -->** contains the saved models. **2018-06-07_14:07** is the model trained using _**train, validation, and test split**_ (129, 20, 48 subjects; 855, 102, 211 volumes) **2018-06-08_10:47** is the model trained on _**all**_ labeled data.
 
