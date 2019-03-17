@@ -26,4 +26,4 @@ dim1 ! == 96 && dim2 ! == 96
 		done
 fi
 done
-mv zpr_* ../images/
+mv zpr_* ../images/ #move all volumes to specified folder for automasking
