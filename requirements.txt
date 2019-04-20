@@ -9,11 +9,7 @@ nilearn==0.4.2
 certifi==2018.8.13
 cycler==0.10.0
 deprecation==1.2
-fsleyes==0.24.6
-fsleyes-props==1.6.3
-fsleyes-widgets==0.6.2
-fslpy==1.10.1
-Jinja2==2.10
+Jinja2==2.10.1
 kiwisolver==1.0.1
 MarkupSafe==1.0
 matplotlib==2.2.3
