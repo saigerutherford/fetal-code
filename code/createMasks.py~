@@ -52,11 +52,11 @@ def createMasks(fileNames, saveNames, checkpointDir=None):
  
 #AN EXAMPLE OF HOW TO USE THIS WITH AN ENTIRE DIRECTORY
 dir = 'images/'
-fileNames = [dir + name for name in os.listdir(dir)]
-saveNames = ['pred_' + name for name in fileNames]
-createMasks(fileNames, saveNames)
+#fileNames = [dir + name for name in os.listdir(dir)]
+#saveNames = ['pred_' + name for name in fileNames]
+#createMasks(fileNames, saveNames)
 
 #AN EXAMPLE WITH A SINGLE FILE
-#fileNames = ['zpr_2006-T1_run1_vol0017.nii']
-#saveNames = ['pred_zpr_2006-T1_run1_vol0017.nii']
-#createMasks(fileNames, saveNames)
+fileNames = ['zpr_2006-T1_run1_vol0017.nii']
+saveNames = ['pred_zpr_2006-T1_run1_vol0017.nii']
+createMasks(fileNames, saveNames)
