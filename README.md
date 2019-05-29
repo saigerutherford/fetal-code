@@ -7,7 +7,7 @@ Primary data used for pipeline development were acquired at Wayne State
 University School of Medicine during the course of projects supported by National
 Institutes of Health (NIH) awards MH110793 and ES026022.
 
-For access to raw fetal functional data used in the development of this code please contact Moriah Thomason Moriah.Thomason@nyulangone.org
+For access to raw fetal functional time-series data used in the development of this code please contact Moriah Thomason Moriah.Thomason@nyulangone.org
 
 ### Repository organization
 **checkpoints -->** contains the saved models. **2018-06-07_14:07** is the model trained using _**train, validation, and test split**_ (129, 20, 48 subjects; 855, 102, 211 volumes) **2018-06-08_10:47** is the model trained on _**all**_ labeled data.
