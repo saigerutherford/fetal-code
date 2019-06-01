@@ -23,4 +23,4 @@ fslview r_native_mask_${sub}.nii 4D_${sub}.nii
 #Swap dimensions if needed
 fslswapdim -x/x -y/y -z/z r_native_mask_${sub}.nii fr_native_mask_${sub}
 #Apply masks to data
-fslmaths 4D_${sub}.nii -mul frnm_${sub}.nii e_4D_${sub}
+fslmaths 4D_${sub}.nii -mul frnm_${sub}.nii e_4D_${sub} 
