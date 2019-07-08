@@ -5,8 +5,7 @@
 cd preproc/
 for sub in `cat ../sublist` #sublist is a text file of 4D NIFTI files (1 filename per line)
 do
-#Delete orientation, resample, zeropad, split 4D time series
-fslorient -deleteorient ${sub}
+#Resample, zeropad, split 4D time series
 fslsplit ${sub} ${sub}_vol -t
 #Unzip files
 for file in *.nii.gz

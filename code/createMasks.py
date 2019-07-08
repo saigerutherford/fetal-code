@@ -28,7 +28,7 @@ def createMasks(fileNames, saveNames, checkpointDir=None):
 
     #Build Model
     outputLayer = CNN(imagesPL)
-    binaryOutputLayer = tf.argmax(outputLayer, axis=3, output_type=tf.int32)
+    binaryOutputLayer = tf.argmax(outputLayer, axis=3)
 
     # Each individual medpy image is of shape (96, 96, 37)
     with tf.Session() as sess:
@@ -51,9 +51,10 @@ def createMasks(fileNames, saveNames, checkpointDir=None):
             print(end-start)
  
 #AN EXAMPLE OF HOW TO USE THIS WITH AN ENTIRE DIRECTORY
-dir = 'images/'
-fileNames = [dir + name for name in os.listdir(dir)]
-saveNames = ['pred_' + name for name in fileNames]
+dir = '/Users/saigerutherford/Desktop/images/' #set this path to the directory where your input images live
+names = [name for name in os.listdir(dir)] 
+fileNames = [dir + name for name in names]
+saveNames = [dir + 'pred_' + name for name in names]
 createMasks(fileNames, saveNames)
 
 #AN EXAMPLE WITH A SINGLE FILE
