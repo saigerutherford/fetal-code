@@ -5,7 +5,7 @@
 
 ![](figures/FetalExample_Axial.gif) 
 ![](figures/FetalExample_Sagittal.gif)
-![](figures/FetalExample_Coronal.gif)
+![](figures/FetalExample_coronal.gif)
 
 Primary data used for pipeline development were acquired at Wayne State
 University School of Medicine during the course of projects supported by National
