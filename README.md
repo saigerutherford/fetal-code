@@ -10,7 +10,7 @@ Institutes of Health (NIH) awards MH110793 and ES026022.
 For access to raw fetal functional time-series data used in the development of this code please contact Moriah Thomason Moriah.Thomason@nyulangone.org
 
 ### Repository organization
-**checkpoints -->** contains the saved models. **2018-06-07_14:07** is the model trained using _**train, validation, and test split**_ (129, 20, 48 subjects; 855, 102, 211 volumes) **2018-06-08_10:47** is the model trained on _**all**_ labeled data.
+**checkpoints -->** contains the saved models. **2018-06-07_14:07** is the model trained using _**train, validation, and test split**_ (129, 20, 48 subjects; 855, 102, 211 volumes) **2018-06-08_10:47** is the model trained on _**all**_ labeled WSU data and tested on Yale data.
 
 **code -->** this directiory contains all necessary scripts for running the pretrained model (`createMasks.py`), or training your own model (`buildModel.py` and `trainModel.py`).  code/FullFetalPreprocessPipeline.sh --> Example pipeline using auto-mask and FSL. s02_automask.sh is an example of how to activate virtual environment and run get masks using the pre-trained model. **Work in progress, not fully tested or setup without hard-coded paths**.
 
@@ -31,7 +31,8 @@ Input data must be of dimensions 96 x 96 x N. The data used in training was resa
 ## Running the auto-mask code options
 ### Use pre-trained model
 Images should be in 3D volume format (split the 4D time series into individual volumes). File naming should be consistent. Currently, the code expects images to be in a folder called "images/" and named as "zpr_SubjectID_runID_vol0000.nii".
-createMask.py is the script to run to create new masks using the model trained with all hand drawn brain masks. 
+createMask.py is the script to run to create new masks using the model trained with all hand drawn brain masks. In order to use the correct pre-trained model, make sure that line 152 of trainModel.py is set as follows: `main(train=False, timeString='2018-06-08_10:47')`
+You will also need to edit lines 57-62 of createMasks.py in order to match the path to the directory of where your data lives. You can also specify (in createMasks.py lines 64-67) a single file to be masked if you are not masking multiple volumes/subjects.
 
 ### Train model on your data
 Instructions for training model on new data coming soon.

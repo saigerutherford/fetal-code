@@ -206,8 +206,10 @@ def main(train=True, timeString=None):
     
 
 #This line evaluates the model on the test set. It does not train anything.
-#main(train=False, timeString='2018-06-07_14:07') 
+main(train=False, timeString='2018-06-08_10:47') #timeString refers to the 2 saved models in the checkpoints directory
+#2018-06-08_10:47 = model trained on all WSU data, tested on Yale data --> should use this model when applying to new unseen data
+#2018-06-07_14:07 = model trained on WSU train set, tested on WSU test set
 
 #This line trains a model from scratch on the training set.
-main()
+#main()
 
