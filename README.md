@@ -3,11 +3,12 @@
 
 **Abstract:** Fetal resting-state functional magnetic resonance imaging (rs-fMRI) has emerged as a critical new approach for characterizing brain development before birth. Despite rapid and widespread growth of this approach, at present we lack neuroimaging processing pipelines suited to address the unique challenges inherent in this data type. Here, we solve the most challenging processing step, rapid and accurate isolation of the fetal brain from surrounding tissue across thousands of non-stationary 3D brain volumes. Leveraging our library of 1,241 manually traced fetal fMRI images from 207 fetuses, we trained a Convolutional Neural Network (CNN) that achieved excellent performance across two held-out test sets from separate scanners and populations. Furthermore, we unite the auto-masking model with additional fMRI preprocessing steps from existing software and provide insight into our adaptation of each step. This work represents an initial advancement towards a fully comprehensive, open source workflow for fetal functional MRI data preprocessing. 
 
-###Example of a very successful auto-mask:
+### Example of a very successful auto-mask:
 ![](figures/FetalExample_good_axial.gif) 
 ![](figures/FetalExample_good_sagittal.gif)
 ![](figures/FetalExample_good_coronal.gif)
-###Example of a failed auto-mask:
+
+### Example of a failed auto-mask:
 ![](figures/FetalExample_poor_axial.gif) 
 ![](figures/FetalExample_poor_sagittal.gif)
 ![](figures/FetalExample_poor_coronal.gif)
