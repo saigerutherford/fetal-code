@@ -2,8 +2,10 @@
 
 # Part 1: Preprocess for automasking
 # Run from within preproc directory
+sublist=$1
+
 cd preproc/
-for sub in `cat ../sublist` #sublist is a text file of 4D NIFTI files (1 filename per line)
+for sub in cat $sublist #sublist is a text file of 4D NIFTI files (1 filename per line)
 do
 #Resample, zeropad, split 4D time series
 fslsplit ${sub} ${sub}_vol -t

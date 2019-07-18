@@ -1,6 +1,11 @@
 #Concatenate masks, view as overlay on raw time series
-for sub in `cat sublist`; do fslmerge -t 4Dmask_${sub} pred_${sub}_vol*.nii; echo ${sub}; done
-for sub in `cat sublist`; do fslmerge -t 4D_${sub} ${sub}_vol*.nii; echo ${sub}; done
+sublist=$1
+path=$2
+
+cd $path
+
+for sub in cat $sublist; do fslmerge -t 4Dmask_${sub} pred_${sub}_vol*.nii; echo ${sub}; done
+for sub in cat $sublist; do fslmerge -t 4D_${sub} ${sub}_vol*.nii; echo ${sub}; done
 #Quality check
 for sub in 4D_*; do mask_name=`echo ${sub//4D_}`; fslview ${sub} 4Dmask_${mask_name} "Copper" -t 0.5
 #keep biggest cluster & binarize the probability masks (needs to be done on 3D volumes, not on 4D timeseries)
