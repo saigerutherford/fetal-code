@@ -29,4 +29,3 @@ tensorboard==1.13.1
 tensorflow==1.1.0
 tensorflow-estimator==1.13.0
 tflearn==0.3.2
-tk==8.6.9
