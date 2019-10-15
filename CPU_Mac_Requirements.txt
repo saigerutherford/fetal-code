@@ -5,8 +5,6 @@ astroid==2.2.5
 attrs==19.1.0
 backcall==0.1.0
 bleach==3.1.0
-bzip2==1.0.6
-ca-certificates
 certifi
 click==7.0
 cycler==0.10.0
