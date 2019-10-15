@@ -12,9 +12,7 @@ entrypoints==0.3
 funcsigs==1.0.2
 future==0.17.1
 gast==0.2.2
-gettext==0.19.8.1
 glib==2.58.3
-grpcio==1.22.0
 h5py==2.9.0
 icu==58.2
 ipykernel==5.1.1
