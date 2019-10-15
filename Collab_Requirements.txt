@@ -14,7 +14,6 @@ jinja2==2.10.1
 keras-applications==1.0.8
 keras-preprocessing==1.1.0
 matplotlib==3.1.0
-matplotlib-base==3.1.0
 medpy==0.4.0
 nibabel==2.4.1
 nilearn==0.5.2
