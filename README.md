@@ -1,4 +1,7 @@
 # Automated Brain Masking of Fetal Functional MRI Data
+
+**ISDP Google Collab Link:** https://colab.research.google.com/drive/10bBTVpCKQeR207hFhvH6F22h-p1edl5v
+
 **Preprint:** https://www.biorxiv.org/content/early/2019/01/21/525386
 
 **Abstract:** Fetal resting-state functional magnetic resonance imaging (rs-fMRI) has emerged as a critical new approach for characterizing brain development before birth. Despite rapid and widespread growth of this approach, at present we lack neuroimaging processing pipelines suited to address the unique challenges inherent in this data type. Here, we solve the most challenging processing step, rapid and accurate isolation of the fetal brain from surrounding tissue across thousands of non-stationary 3D brain volumes. Leveraging our library of 1,241 manually traced fetal fMRI images from 207 fetuses, we trained a Convolutional Neural Network (CNN) that achieved excellent performance across two held-out test sets from separate scanners and populations. Furthermore, we unite the auto-masking model with additional fMRI preprocessing steps from existing software and provide insight into our adaptation of each step. This work represents an initial advancement towards a fully comprehensive, open source workflow for fetal functional MRI data preprocessing. 
