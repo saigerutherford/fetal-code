@@ -1,7 +1,5 @@
 # Automated Brain Masking of Fetal Functional MRI Data
 
-**ISDP Google Collab Link:** https://colab.research.google.com/drive/10bBTVpCKQeR207hFhvH6F22h-p1edl5v
-
 **Preprint:** https://www.biorxiv.org/content/early/2019/01/21/525386
 
 **Abstract:** Fetal resting-state functional magnetic resonance imaging (rs-fMRI) has emerged as a critical new approach for characterizing brain development before birth. Despite rapid and widespread growth of this approach, at present we lack neuroimaging processing pipelines suited to address the unique challenges inherent in this data type. Here, we solve the most challenging processing step, rapid and accurate isolation of the fetal brain from surrounding tissue across thousands of non-stationary 3D brain volumes. Leveraging our library of 1,241 manually traced fetal fMRI images from 207 fetuses, we trained a Convolutional Neural Network (CNN) that achieved excellent performance across two held-out test sets from separate scanners and populations. Furthermore, we unite the auto-masking model with additional fMRI preprocessing steps from existing software and provide insight into our adaptation of each step. This work represents an initial advancement towards a fully comprehensive, open source workflow for fetal functional MRI data preprocessing. 
@@ -26,6 +24,11 @@ Institutes of Health (NIH) awards MH110793 and ES026022.
 For access to raw fetal functional time-series data and training/validation/test mask used in the development of this code please contact Moriah Thomason Moriah.Thomason@nyulangone.org
 
 ### Repository organization
+
+**ISDP Google Collab Link:** https://colab.research.google.com/drive/10bBTVpCKQeR207hFhvH6F22h-p1edl5v
+
+**fetal_mask_tutorial.ipynb** is a Google colab notebook used during ISDP 2019 pre-conference workshop. This is an example of running the code using Google's resources. I also introduce/provide links to BioImageSuite web, a useful tool (in your web browser )for viewing data, quality checking, and editing masks. https://bioimagesuiteweb.github.io/webapp/viewer.html#
+
 **checkpoints -->** contains the saved models. **2018-06-07_14:07** is the model trained using _**train, validation, and test split**_ (129, 20, 48 subjects; 855, 102, 211 volumes) **2018-06-08_10:47** is the model trained on _**all**_ labeled WSU data and tested on Yale data.
 
 **code -->** this directiory contains all necessary scripts for running the pretrained model (`createMasks.py`), or training your own model (`buildModel.py` and `trainModel.py`).  
