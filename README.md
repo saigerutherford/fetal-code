@@ -28,7 +28,13 @@ For access to raw fetal functional time-series data and training/validation/test
 ### Repository organization
 **checkpoints -->** contains the saved models. **2018-06-07_14:07** is the model trained using _**train, validation, and test split**_ (129, 20, 48 subjects; 855, 102, 211 volumes) **2018-06-08_10:47** is the model trained on _**all**_ labeled WSU data and tested on Yale data.
 
-**code -->** this directiory contains all necessary scripts for running the pretrained model (`createMasks.py`), or training your own model (`buildModel.py` and `trainModel.py`).  code/FullFetalPreprocessPipeline.sh --> Example pipeline using auto-mask and FSL. s02_automask.sh is an example of how to activate virtual environment and run get masks using the pre-trained model. **Work in progress, not fully tested or setup without hard-coded paths**.
+**code -->** this directiory contains all necessary scripts for running the pretrained model (`createMasks.py`), or training your own model (`buildModel.py` and `trainModel.py`).  
+code/FullFetalPreprocessPipeline.sh --> Example pipeline using auto-mask and FSL. 
+s01_prep.sh shows how to zeropad/resample images to get ready to be auto-masked.
+s02_automask.sh is an example of how to activate virtual environment and run get masks using the pre-trained model. 
+s03_postprocessmasks.sh shows how to threshold/binarize automasks, resample back in native space, and apply the mask to extract the brain.
+s04_realign_normalize.sh shows the FSL commands used to realign & normalize.
+**These scripts are meant to be template scripts/examples. They have not been fully tested or setup without hard-coded paths**.
 
 
 **figures -->** Jupyter notebook(s) used to make the figures in the manuscript. 
@@ -41,6 +47,7 @@ For access to raw fetal functional time-series data and training/validation/test
 Required libraries: 
 For running on Mac CPU --> CPU_Mac_Requirements.txt (note: some of these libraries are probably unnecessary if you do not use Jupyter)
 For running on Linux using GPU --> GPU_Linux_Requirements.txt (note: tensorflow_gpu==1.11 requires CUDA 9.0 see https://www.tensorflow.org/install/gpu for more details)
+For running in Google collab notebook --> Collab_Requirements.txt 
 
 ### Necessary data prep steps (prior to auto-masking)
 Input data must be of dimensions 96 x 96 x N. The data used in training was resampled to voxel size 3.5 mm^3, then zero padded to 96 x 96 x 37. See s01_prep.sh for an example of preprocessing commands.
