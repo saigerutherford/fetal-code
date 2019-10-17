@@ -18,7 +18,6 @@ medpy==0.4.0
 nibabel==2.4.1
 nilearn==0.5.2
 nipype==1.2.0
-notebook==5.7.8
 numpy==1.16.4
 packaging==19.0
 pandas==0.24.2

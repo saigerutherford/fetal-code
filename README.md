@@ -16,6 +16,9 @@
 ![](figures/FetalExample_poor_sagittal.gif)
 ![](figures/FetalExample_poor_coronal.gif)
 
+### Motion...needs to be talked about
+![](figures/Motion.png)
+
 Primary data used for pipeline development were acquired at Wayne State
 University School of Medicine during the course of projects supported by National
 Institutes of Health (NIH) awards MH110793 and ES026022.
@@ -28,9 +31,10 @@ For access to raw fetal functional time-series data and training/validation/test
 **code -->** this directiory contains all necessary scripts for running the pretrained model (`createMasks.py`), or training your own model (`buildModel.py` and `trainModel.py`).  code/FullFetalPreprocessPipeline.sh --> Example pipeline using auto-mask and FSL. s02_automask.sh is an example of how to activate virtual environment and run get masks using the pre-trained model. **Work in progress, not fully tested or setup without hard-coded paths**.
 
 
-**figures -->** Jupyter notebook used to make the figures in the manuscript. 
+**figures -->** Jupyter notebook(s) used to make the figures in the manuscript. 
 
-**summaries -->** Contains the summaries for both models described above (in the checkpoints directory description) that can be viewed using tensorboard.
+**summaries -->** Contains the summaries for both models described above (in the checkpoints directory description) that can be viewed using tensorboard. 
+10/17/19 update: tensorboard is not correctly loading the summaries. 
 `tensorboard --logdir=summaries/model_name`
 
 ### Installation & Requirements
