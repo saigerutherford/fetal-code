@@ -22,7 +22,7 @@ ipywidgets==7.4.2
 isodate==0.6.0
 isort==4.3.21
 jedi==0.13.3
-jinja2==2.10.1
+jinja2==2.11.3
 joblib==0.13.2
 jpeg==9c
 jsonschema==3.0.1

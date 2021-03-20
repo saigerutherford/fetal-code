@@ -10,7 +10,7 @@ decorator==4.4.0
 entrypoints==0.3
 future==0.17.1
 h5py==2.9.0
-jinja2==2.10.1
+jinja2==2.11.3
 keras-applications==1.0.8
 keras-preprocessing==1.1.0
 matplotlib==3.1.0
