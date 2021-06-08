@@ -77,7 +77,7 @@ patsy==0.5.1
 pcre==8.41
 pexpect==4.7.0
 pickleshare==0.7.5
-pillow==6.2.0
+pillow==8.2.0
 pip==19.1
 prometheus_client==0.6.0
 prompt_toolkit==2.0.9
