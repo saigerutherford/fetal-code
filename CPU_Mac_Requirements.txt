@@ -64,7 +64,7 @@ neurdflib==5.0.0.post1
 nibabel==2.4.1
 nilearn==0.5.2
 nipype==1.2.0
-notebook==6.1.5
+notebook==6.4.1
 numpy==1.21.0
 openblas==0.3.6
 openssl==1.1.1b
