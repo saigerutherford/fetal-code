@@ -81,7 +81,7 @@ pillow==6.2.0
 pip==19.1
 prometheus_client==0.6.0
 prompt_toolkit==2.0.9
-protobuf==3.8.0
+protobuf==3.15.0
 prov==1.5.3
 ptyprocess==0.6.0
 pydot==1.4.1
