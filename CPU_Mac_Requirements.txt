@@ -65,7 +65,7 @@ nibabel==2.4.1
 nilearn==0.5.2
 nipype==1.2.0
 notebook==6.1.5
-numpy==1.16.4
+numpy==1.21.0
 openblas==0.3.6
 openssl==1.1.1b
 packaging==19.0
