@@ -14,7 +14,7 @@ nibabel==2.3.0
 numpy==1.21.0
 pandas==0.23.4
 pbr==4.2.0
-Pillow==6.2.0
+Pillow==9.0.1
 protobuf==3.15.0
 pydicom==1.1.0
 python-dateutil==2.7.3
