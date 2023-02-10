@@ -16,7 +16,7 @@ glib==2.58.3
 h5py==2.9.0
 icu==58.2
 ipykernel==5.1.1
-ipython==7.16.3
+ipython==8.10.0
 ipython_genutils==0.2.0
 ipywidgets==7.4.2
 isodate==0.6.0
